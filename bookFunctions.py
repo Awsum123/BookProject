@@ -55,7 +55,7 @@ def search_google_books(query, max_results=5):
         "q": query,
         "maxResults": max_results,
         "key": os.getenv('key'),
-        "country": "CN"
+        "country": "US"
     }
     response = requests.get(url, params=params)
     data = response.json()
