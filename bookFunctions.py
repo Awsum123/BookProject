@@ -106,7 +106,7 @@ def search_google_books(query, max_results=5):
     return results
 """
 
-def search_google_books(query, max_results=5)
+def search_google_books(query, max_results=5):
     url = "https://www.googleapis.com/books/v1/volumes"
     params = {
         "q": "intitle:The Great Gatsby inauthor:F. Scott Fitzgerald",
