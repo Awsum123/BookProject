@@ -52,7 +52,7 @@ def search_google_books(query, max_results=5):
     params = {
         "q": query,
         "maxResults": max_results,
-        "key": "AIzaSyAE3sGjvtHhtx3NvaylYfwH_bKcq_v0xhE",
+        "key": "AIzaSyA7ziWYE6ICxF1VZMyMJE4AX2r_7vgh97o",
     }
 
     response = requests.get(url, params=params)
