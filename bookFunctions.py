@@ -3,6 +3,7 @@ from PIL import Image
 import streamlit as st
 import requests
 import re
+import os
 
 
 # ====== CONFIGURATION ======
@@ -52,7 +53,7 @@ def search_google_books(query, max_results=5):
     params = {
         "q": query,
         "maxResults": max_results,
-        "key": "AIzaSyA7ziWYE6ICxF1VZMyMJE4AX2r_7vgh97o",
+        "key": os.getenv('key'),
     }
 
     response = requests.get(url, params=params)
