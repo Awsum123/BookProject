@@ -48,6 +48,7 @@ def parse_title_author(response_text):
     return None, None
 
 # ====== GOOGLE BOOKS SEARCH ======
+"""
 def search_google_books(query, max_results=5):
     url = "https://www.googleapis.com/books/v1/volumes"
     params = {
@@ -103,9 +104,21 @@ def search_google_books(query, max_results=5):
         results.append(book_data)
 
     return results
+"""
 
-
-# ====== RECOMMENDATIONS ======
+def search_google_books(query, max_results=5)
+    url = "https://www.googleapis.com/books/v1/volumes"
+    params = {
+        "q": "intitle:The Great Gatsby inauthor:F. Scott Fitzgerald",
+        "maxResults": 1,
+        "key": key
+    }
+    
+    resp = requests.get(url, params=params)
+    st.write(resp.status_code)
+    st.write(resp.json())
+    
+    # ====== RECOMMENDATIONS ======
 def get_recommendations(model, book_title):
     response = model.generate_content([
         "Get 5 recommendations similar to this book title: " + book_title +" just list out the reccomendations don't add any extra explanation"
