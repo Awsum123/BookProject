@@ -1,0 +1,11 @@
+# Core libraries
+streamlit
+pandas
+numpy
+scikit-learn
+Pillow
+requests
+rapidfuzz
+
+# Gemini API (Google Generative AI SDK)
+google-generativeai
