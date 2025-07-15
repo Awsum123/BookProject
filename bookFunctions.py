@@ -1,5 +1,6 @@
 import google.generativeai as genai
 from PIL import Image
+import streamlit as st
 import requests
 import re
 
@@ -55,17 +56,24 @@ def search_google_books(query, max_results=5):
     }
 
     response = requests.get(url, params=params)
-    print(f"Request URL: {response.url}")
-    print(f"Status code: {response.status_code}")
-    print(f"Response JSON: {response.text}")
-    data = response.json()
+    st.write(f"Google Books API status code: {response.status_code}")
+    try:
+        json_data = response.json()
+        st.write("Google Books API response keys:", list(json_data.keys()))
+        # Optionally show items count if present
+        if "items" in json_data:
+            st.write(f"Number of books returned: {len(json_data['items'])}")
+        else:
+            st.write("No items key in response.")
+    except Exception as e:
+        st.write(f"Error parsing JSON response: {e}")
 
-    if "items" not in data:
+    if "items" not in response.json():
         return []
 
     results = []
 
-    for item in data["items"]:
+    for item in response.json().get("items", []):
         volume_info = item.get("volumeInfo", {})
         sale_info = item.get("saleInfo", {})
 
@@ -93,6 +101,7 @@ def search_google_books(query, max_results=5):
         results.append(book_data)
 
     return results
+
 
 # ====== RECOMMENDATIONS ======
 def get_recommendations(model, book_title):
