@@ -48,13 +48,14 @@ def parse_title_author(response_text):
     return None, None
 
 # ====== GOOGLE BOOKS SEARCH ======
-"""
+
 def search_google_books(query, max_results=5):
     url = "https://www.googleapis.com/books/v1/volumes"
     params = {
         "q": query,
         "maxResults": max_results,
         "key": os.getenv('key'),
+        "country": "US"
     }
     key = os.getenv('key')
     st.write(f"Using API key: key (length {(key)})")
@@ -118,7 +119,7 @@ def search_google_books(query, max_results=5):
     resp = requests.get(url, params=params)
     st.write(resp.status_code)
     st.write(resp.json())
-    
+    """
     # ====== RECOMMENDATIONS ======
 def get_recommendations(model, book_title):
     response = model.generate_content([
