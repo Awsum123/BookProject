@@ -51,10 +51,13 @@ def search_google_books(query, max_results=5):
     params = {
         "q": query,
         "maxResults": max_results,
-        "key": "AIzaSyCgOKyxFUzqmRi5ruHCWWKmDUiCiDSM2yA",
+        "key": "AIzaSyAE3sGjvtHhtx3NvaylYfwH_bKcq_v0xhE",
     }
 
     response = requests.get(url, params=params)
+    print(f"Request URL: {response.url}")
+    print(f"Status code: {response.status_code}")
+    print(f"Response JSON: {response.text}")
     data = response.json()
 
     if "items" not in data:
