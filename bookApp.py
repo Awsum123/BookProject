@@ -83,8 +83,6 @@ if 'image_bytes' in st.session_state:
     
     book_titles = [f"{b['title']} by {', '.join(b['authors'])}" for b in books]
     selected_idx = st.selectbox("Choose a book:", options=range(len(book_titles)), format_func=lambda i: book_titles[i])
-    st.write(f"selected_idx: {selected_idx}, type: {type(selected_idx)}")
-    st.write(f"books length: {len(books)}, type: {type(books)}")
     selected_book = books[selected_idx]
 
     actions = ["Show Details", "Other Recommendations", "Show other books in series"]
