@@ -55,7 +55,7 @@ if st.button("Take Picture", type="primary"):
 
 img_file = None
 if st.session_state.show_camera:
-    img_file = st.camera_input("Take a picture of a book")
+    img_file = st.camera_input("Take a picture")
 
 if img_file is not None:
     st.session_state.image_bytes = img_file.getvalue()
@@ -80,10 +80,11 @@ if 'image_bytes' in st.session_state:
     st.write(f"**Title:** {title}")
     st.write(f"**Author:** {author}")
 
-    st.write(f"selected_idx: {selected_idx}, type: {type(selected_idx)}")
-    st.write(f"books length: {len(books)}, type: {type(books)}")
+    
     book_titles = [f"{b['title']} by {', '.join(b['authors'])}" for b in books]
     selected_idx = st.selectbox("Choose a book:", options=range(len(book_titles)), format_func=lambda i: book_titles[i])
+    st.write(f"selected_idx: {selected_idx}, type: {type(selected_idx)}")
+    st.write(f"books length: {len(books)}, type: {type(books)}")
     selected_book = books[selected_idx]
 
     actions = ["Show Details", "Other Recommendations", "Show other books in series"]
