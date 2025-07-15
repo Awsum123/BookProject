@@ -55,7 +55,8 @@ def search_google_books(query, max_results=5):
         "maxResults": max_results,
         "key": os.getenv('key'),
     }
-    st.write(f"Using API key: 'key' (length {len(key)})")
+    key = os.getenv('key')
+    st.write(f"Using API key: key (length {len(key)})")
     response = requests.get(url, params=params)
     st.write(f"Google Books API status code: {response.status_code}")
     try:
