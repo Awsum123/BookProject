@@ -57,27 +57,15 @@ def search_google_books(query, max_results=5):
         "key": os.getenv('key'),
         "country": "US"
     }
-    key = os.getenv('key')
-    st.write(f"Using API key: key (length {(key)})")
     response = requests.get(url, params=params)
-    st.write(f"Google Books API status code: {response.status_code}")
-    try:
-        json_data = response.json()
-        st.write("Google Books API response keys:", list(json_data.keys()))
-        # Optionally show items count if present
-        if "items" in json_data:
-            st.write(f"Number of books returned: {len(json_data['items'])}")
-        else:
-            st.write("No items key in response.")
-    except Exception as e:
-        st.write(f"Error parsing JSON response: {e}")
+    data = response.json()
 
-    if "items" not in response.json():
+    if "items" not in data:
         return []
 
     results = []
 
-    for item in response.json().get("items", []):
+    for item in data["items"]:
         volume_info = item.get("volumeInfo", {})
         sale_info = item.get("saleInfo", {})
 
@@ -105,6 +93,7 @@ def search_google_books(query, max_results=5):
         results.append(book_data)
 
     return results
+
 """
 
 def search_google_books(query, max_results=5):
