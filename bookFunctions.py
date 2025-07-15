@@ -111,7 +111,7 @@ def search_google_books(query, max_results=5):
     params = {
         "q": "intitle:The Great Gatsby inauthor:F. Scott Fitzgerald",
         "maxResults": 1,
-        "key": key
+        "key": "AIzaSyAE3sGjvtHhtx3NvaylYfwH_bKcq_v0xhE"
     }
     
     resp = requests.get(url, params=params)
