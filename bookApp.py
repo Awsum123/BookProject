@@ -1,5 +1,6 @@
 import streamlit as st
 from PIL import Image
+import os
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.metrics.pairwise import cosine_similarity
 from bookFunctions import (
@@ -31,7 +32,7 @@ def cached_prepare_book_tags_set(books, book_tags, tags):
 # Cache model initialization
 @st.cache_resource(show_spinner=True)
 def cached_init_genai():
-    return init_genai("AIzaSyCfcxAJSfc8ANCHak2YF0l5OIEMooSXkPs")
+    return init_genai(os.getenv('gemini'))
 
 
 # Use cached functions instead of direct calls
