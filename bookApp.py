@@ -55,7 +55,7 @@ if st.button("Take Picture", type="primary"):
 
 img_file = None
 if st.session_state.show_camera:
-    img_file = st.camera_input("Take a picture")
+    img_file = st.camera_input("Take a picture of a book")
 
 if img_file is not None:
     st.session_state.image_bytes = img_file.getvalue()
