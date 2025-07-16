@@ -47,12 +47,11 @@ st.write("Take a picture of a book cover and get details!")
 if 'show_camera' not in st.session_state:
     st.session_state.show_camera = False
 
-if st.button("Take Picture", type="primary"):
-    # Clear all previous data to avoid stale info on new picture
-    for key in ['image_bytes', 'ocr_text', 'title_author', 'books']:
-        if key in st.session_state:
-            del st.session_state[key]
+if st.button("Take New Picture", type="primary"):
+    # Clear previous image and related data
     st.session_state.show_camera = True
+    for key in ['image_bytes', 'ocr_text', 'title_author', 'books']:
+        st.session_state.pop(key, None)
 
 img_file = None
 if st.session_state.show_camera:
@@ -62,6 +61,9 @@ if img_file is not None:
     st.session_state.image_bytes = img_file.getvalue()
     # Hide camera after image taken to prevent re-capturing unless new button click
     st.session_state.show_camera = False
+
+if 'image_bytes' in st.session_state:
+    st.image(st.session_state.image_bytes, caption="Captured Book Cover", use_column_width=True)
 
 if 'image_bytes' in st.session_state:
     if 'ocr_text' not in st.session_state:
