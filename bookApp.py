@@ -63,7 +63,7 @@ if img_file is not None:
     st.session_state.show_camera = False
 
 if 'image_bytes' in st.session_state:
-    st.image(st.session_state.image_bytes, caption="Captured Book Cover", use_column_width=True)
+    st.image(st.session_state.image_bytes, caption="Captured Book Cover", use_container_width=True)
 
 if 'image_bytes' in st.session_state:
     if 'ocr_text' not in st.session_state:
