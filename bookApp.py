@@ -61,7 +61,7 @@ def cached_prepare_book_tags_set(books, book_tags, tags):
 
 @st.cache_resource(show_spinner=True)
 def cached_init_genai():
-    return init_genai("")
+    return init_genai(os.getenv('gemini'))
 
 # --- Speech Recognition JS ---
 st.markdown("""
