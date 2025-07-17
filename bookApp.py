@@ -9,7 +9,6 @@ from bookFunctions import (
     parse_title_author,
     get_recommendations,
     check_book_series,
-    extract_title_author_from_text,
 )
 from bookRecs import(
     recommend_books,
