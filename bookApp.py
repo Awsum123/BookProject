@@ -1,6 +1,5 @@
 import streamlit as st
 from PIL import Image
-import os
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.metrics.pairwise import cosine_similarity
 from bookFunctions import (
@@ -10,6 +9,7 @@ from bookFunctions import (
     parse_title_author,
     get_recommendations,
     check_book_series,
+    extract_title_author_from_text,
 )
 from bookRecs import(
     recommend_books,
@@ -18,40 +18,114 @@ from bookRecs import(
     recommend_books_cosine
 )
 import pandas as pd
+import base64
 
-# Cache the data loading function
+# --- Base64 Background Setup ---
+def get_base64(file_path):
+    with open(file_path, "rb") as f:
+        data = f.read()
+    return base64.b64encode(data).decode()
+
+image_path = "background.png"
+encoded_image = get_base64(image_path)
+
+st.markdown(f"""
+    <style>
+    .stApp {{
+        background-image: url("data:image/jpg;base64,{encoded_image}");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }}
+    </style>
+    """, unsafe_allow_html=True)
+
+# --- Load CSS ---
+def local_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f'<style>{{f.read()}}</style>', unsafe_allow_html=True)
+
+local_css("style.css")
+
+# --- Page Config ---
+st.set_page_config(page_title="Book Finder", layout="centered")
+
+# --- Caching Functions ---
 @st.cache_data(show_spinner=True)
 def cached_load_data():
     return load_data()
 
-# Cache the data preparation function
 @st.cache_data(show_spinner=True)
 def cached_prepare_book_tags_set(books, book_tags, tags):
     return prepare_book_tags_set(books, book_tags, tags)
 
-# Cache model initialization
 @st.cache_resource(show_spinner=True)
 def cached_init_genai():
-    return init_genai(os.getenv('gemini'))
+    return init_genai("")
 
+# --- Speech Recognition JS ---
+st.markdown("""
+<script>
+function startDictationOnce() {
+    if (window.hasOwnProperty('webkitSpeechRecognition')) {
+        var recognition = new webkitSpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = "en-US";
+        recognition.start();
 
-# Use cached functions instead of direct calls
+        recognition.onresult = function(e) {
+            const transcript = e.results[0][0].transcript;
+            const inputField = document.getElementById("speech_result");
+            inputField.value = transcript;
+            inputField.dispatchEvent(new Event('input', { bubbles: true }));
+            recognition.stop();
+        };
+
+        recognition.onerror = function(e) {
+            recognition.stop();
+        };
+    }
+}
+</script>
+""", unsafe_allow_html=True)
+
+# --- Load Models/Data ---
 books, book_tags, tags = cached_load_data()
 book_tags_set = cached_prepare_book_tags_set(books, book_tags, tags)
-#mlb, tag_matrix, similarity_matrix = cached_cosine_model(book_tags_set)
 MODEL = cached_init_genai()
 
+# --- UI ---
 st.title("Book Identifier")
-st.write("Take a picture of a book cover and get details!")
+st.markdown('<p style="font-size:25px;">Take a picture of a book to get details, recommendations, and more.</p>', unsafe_allow_html=True)
 
 if 'show_camera' not in st.session_state:
     st.session_state.show_camera = False
 
-if st.button("Take New Picture", type="primary"):
-    # Clear previous image and related data
-    st.session_state.show_camera = True
+st.markdown("""
+    <style>
+    .stButton button p { font-size: 18px !important; }
+    </style>
+""", unsafe_allow_html=True)
+
+if st.button("Take Picture", type="primary"):
     for key in ['image_bytes', 'ocr_text', 'title_author', 'books']:
         st.session_state.pop(key, None)
+    st.session_state.show_camera = True
+    st.session_state.manual_entry = False
+
+if st.button("Enter Title and Author Instead"):
+    for key in ['image_bytes', 'ocr_text', 'title_author', 'books']:
+        st.session_state.pop(key, None)
+    st.session_state.manual_entry = True
+    st.session_state.show_camera = False
+
+if st.session_state.get('manual_entry', False):
+    title = st.text_input("Enter Book Title:")
+    author = st.text_input("Enter Author Name:")
+    if title and author:
+        st.session_state.title_author = (title, author)
+        st.session_state.books = search_google_books(f"intitle:{title} inauthor:{author}", max_results=15)
 
 img_file = None
 if st.session_state.show_camera:
@@ -59,11 +133,7 @@ if st.session_state.show_camera:
 
 if img_file is not None:
     st.session_state.image_bytes = img_file.getvalue()
-    # Hide camera after image taken to prevent re-capturing unless new button click
     st.session_state.show_camera = False
-
-if 'image_bytes' in st.session_state:
-    st.image(st.session_state.image_bytes, caption="Captured Book Cover", use_container_width=True)
 
 if 'image_bytes' in st.session_state:
     if 'ocr_text' not in st.session_state:
@@ -77,16 +147,23 @@ if 'image_bytes' in st.session_state:
         title, author = st.session_state.title_author
         st.session_state.books = search_google_books(f"intitle:{title} inauthor:{author}", max_results=15)
 
+if 'title_author' in st.session_state and 'books' in st.session_state:
     books = st.session_state.books
     title, author = st.session_state.title_author
 
     st.write(f"**Title:** {title}")
     st.write(f"**Author:** {author}")
 
-    
     book_titles = [f"{b['title']} by {', '.join(b['authors'])}" for b in books]
-    selected_idx = st.selectbox("Choose a book:", options=range(len(book_titles)), format_func=lambda i: book_titles[i])
-    selected_book = books[selected_idx]
+
+    maxSelected = max(books, key=lambda b: b.get('ratings_count', 0))
+    default_index = books.index(maxSelected)
+
+    if "book_select" not in st.session_state or st.session_state.book_select not in book_titles:
+        st.session_state.book_select = book_titles[default_index]
+
+    selected = st.selectbox("Choose a book:", book_titles, key="book_select")
+    selected_book = books[book_titles.index(selected)]
 
     actions = ["Show Details", "Other Recommendations", "Show other books in series"]
     action = st.selectbox("Choose an action:", actions)
@@ -104,7 +181,7 @@ if 'image_bytes' in st.session_state:
         st.write(f"**Retail Price:** {selected_book.get('retail_price', 'N/A')}")
 
     elif action == "Other Recommendations":
-        recommendations =  recommend_books_by_title_author(
+        recommendations = recommend_books_by_title_author(
             selected_book['title'],
             ", ".join(selected_book['authors']),
             book_tags_set,
@@ -112,20 +189,17 @@ if 'image_bytes' in st.session_state:
         )
         st.write(f"Generating recommendations based on: **{selected_book['title']}** by **{', '.join(selected_book['authors'])}**")
         if recommendations is not None and not recommendations.empty:
-            for idx, row in recommendations.iterrows():
+            for _, row in recommendations.iterrows():
                 st.write(f"**{row['title']}**")
         else:
             st.write("Couldn’t find direct matches. Using AI-based recommendations:")
             ai_recs = get_recommendations(MODEL, title)
-
-            # If it's a list, iterate through and print nicely
             if isinstance(ai_recs, list):
                 for rec in ai_recs:
                     st.write(f"**{rec}**")
-            # If it's a string (sometimes language models return a block), split it
             elif isinstance(ai_recs, str):
                 for rec in ai_recs.strip().split("\n"):
-                    rec = rec.strip("-•* ")  # Clean up bullet points if any
+                    rec = rec.strip("-•* ")
                     if rec:
                         st.write(f"**{rec}**")
             else:
