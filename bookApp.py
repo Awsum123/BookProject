@@ -1,4 +1,5 @@
 import streamlit as st
+import os
 from PIL import Image
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.metrics.pairwise import cosine_similarity
