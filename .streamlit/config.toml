@@ -1,1 +1,7 @@
-
+[theme]
+base="light"
+primaryColor="#D3B8AE" # A warm, soft color
+backgroundColor="#F7F2EF" # Light background for the content area (stApp)
+secondaryBackgroundColor="#EFEBE8" # For sidebar and some widgets
+textColor="#4A4A4A" # Your default text color
+font="sans serif"
