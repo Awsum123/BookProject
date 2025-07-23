@@ -151,8 +151,8 @@ if 'title_author' in st.session_state and 'books' in st.session_state:
     books = st.session_state.books
     title, author = st.session_state.title_author
 
-    st.markdown(f"<p style='font-size: 24px;'>Title: {title}</p>", unsafe_allow_html=True)
-    st.markdown(f"<p style='font-size: 24px;'>Author: {author}</p>", unsafe_allow_html=True)
+    st.markdown(f"<p style='font-size: 20px;'>Title: {title}</p>", unsafe_allow_html=True)
+    st.markdown(f"<p style='font-size: 20px;'>Author: {author}</p>", unsafe_allow_html=True)
 
     book_titles = [f"{b['title']} by {', '.join(b['authors'])}" for b in books]
 
