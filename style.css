@@ -1,26 +1,21 @@
-/* --- Your existing font-related CSS rules will go here --- */
-/* ... (body, .main-title, .subtitle, p, h1-h6, .stWidget label, input, textarea, selectbox styles) ... */
-
 /* --- Button Styling --- */
 .stButton>button {
-    /* Font styles (keep these as you've set them) */
+    /* Font styles*/
     font-size: 1.1em;
     font-family: 'Open Sans', sans-serif;
     font-weight: bold;
-    color: #333333; /* <-- Darker text color, as you requested */
+    color: #333333; 
 
     /* --- ADD/MODIFY THESE LINES FOR THE BUTTON BACKGROUND --- */
-    background-color: #D3B8AE; /* <-- This makes the background always visible! */
-                               /* This is your primaryColor from config.toml, now applied directly. */
-    border: none;             /* <-- Remove any default border */
-    border-radius: 8px;       /* <-- Match config.toml style, if not already there */
-    padding: 10px 20px;       /* <-- Ensure good spacing */
-
-    /* Add back other styling for the non-hover state if you want */
+    background-color: #D3B8AE; /* makes the background always visible*/
+                               /* primaryColor from config.toml, now applied directly. */
+    border: none;             /* Remove any default border */
+    border-radius: 8px;       /*Match config.toml stylee */
+    padding: 10px 20px;       /*spacing */
 }
 
 /* --- Button Hover Styling --- */
 .stButton>button:hover {
-    background-color: #B4978D; /* <-- Slightly darker background on hover */
+    background-color: #B4978D; /* slightly darker background on hover */
     cursor: pointer;
 }
