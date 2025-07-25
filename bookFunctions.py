@@ -94,21 +94,6 @@ def search_google_books(query, max_results=5):
 
     return results
 
-"""
-
-def search_google_books(query, max_results=5):
-    url = "https://www.googleapis.com/books/v1/volumes"
-    params = {
-        "q": "intitle:The Great Gatsby inauthor:F. Scott Fitzgerald",
-        "maxResults": 1,
-        "key": "AIzaSyAE3sGjvtHhtx3NvaylYfwH_bKcq_v0xhE",
-        "country": "US"
-    }
-    
-    resp = requests.get(url, params=params)
-    st.write(resp.status_code)
-    st.write(resp.json())
-    """
     # ====== RECOMMENDATIONS ======
 def get_recommendations(model, book_title):
     response = model.generate_content([
