@@ -199,9 +199,8 @@ if 'title_author' in st.session_state and 'books' in st.session_state:
         if recommendations is not None and not recommendations.empty:
             for _, row in recommendations.iterrows():
                 st.write(f"**{row['title']}**")
-                tags = list(row['shared_tags'])[:5]
-                if tags:
-                    st.write(f"Why: {', '.join(tags)}")
+                cleaned_tags = clean_display_tags(row['shared_tags'])
+                st.write(f"**{', '.join(cleaned_tags[:5])}**")
         else:
             st.write("Couldn’t find direct matches. Using AI-based recommendations:")
             ai_recs = get_recommendations(MODEL, title)
@@ -222,3 +221,31 @@ if 'title_author' in st.session_state and 'books' in st.session_state:
             st.write(series)
         else:
             st.write("This book is not part of a series.")
+def clean_display_tags(tags):
+    cleaned = []
+    
+    for tag in tags:
+        tag = tag.lower()
+        tag = tag.replace("-", " ").strip()
+
+        # normalize common duplicates
+        if "dystop" in tag:
+            tag = "dystopian"
+        if "post apocalyptic" in tag:
+            tag = "post-apocalyptic"
+
+        # remove bad tags
+        if tag in ["suzanne collins", "the hunger games", "hunger games"]:
+            continue
+
+        cleaned.append(tag)
+
+    # remove duplicates while keeping order
+    seen = set()
+    final = []
+    for tag in cleaned:
+        if tag not in seen:
+            seen.add(tag)
+            final.append(tag)
+
+    return final
