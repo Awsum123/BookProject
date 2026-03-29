@@ -191,6 +191,7 @@ if 'title_author' in st.session_state and 'books' in st.session_state:
         if recommendations is not None and not recommendations.empty:
             for _, row in recommendations.iterrows():
                 st.write(f"**{row['title']}**")
+                st.write(f"**{row['shared_tags']}**")
         else:
             st.write("Couldn’t find direct matches. Using AI-based recommendations:")
             ai_recs = get_recommendations(MODEL, title)
