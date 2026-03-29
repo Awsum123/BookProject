@@ -181,10 +181,18 @@ if 'title_author' in st.session_state and 'books' in st.session_state:
         st.write(f"**Retail Price:** {selected_book.get('retail_price', 'N/A')}")
 
     elif action == "Other Recommendations":
+        """recommendations = recommend_books_by_title_author(
+            selected_book['title'],
+            ", ".join(selected_book['authors']),
+            book_tags_set,
+            top_n=5
+        )"""
+
         recommendations = recommend_books_by_title_author(
             selected_book['title'],
             ", ".join(selected_book['authors']),
             book_tags_set,
+            tag_counts,
             top_n=5
         )
         st.write(f"Generating recommendations based on: **{selected_book['title']}** by **{', '.join(selected_book['authors'])}**")
