@@ -46,7 +46,9 @@ def prepare_book_tags_set(books, book_tags, tags):
     book_tags_set = pd.merge(book_tags_set, books_subset, on='goodreads_book_id')
     book_tags_set.rename(columns={'goodreads_book_id': 'book_id', 'tag_name': 'tags'}, inplace=True)
     book_tags_set = book_tags_set[['book_id', 'title', 'authors', 'tags']]
-
+    from collections import Counter
+    all_tags = [tag for tags in book_tags_set['tags'] for tag in tags]
+    tag_counts = Counter(all_tags)
     # Convert 'tags' column sets to frozensets for hashability
     book_tags_set['tags'] = book_tags_set['tags'].apply(frozenset)
 
@@ -54,7 +56,7 @@ def prepare_book_tags_set(books, book_tags, tags):
     book_tags_set['norm_title'] = book_tags_set['title'].apply(clean_text)
     book_tags_set['norm_authors'] = book_tags_set['authors'].apply(clean_text)
 
-    return book_tags_set
+    return book_tags_set, tag_counts
 
 
 STOPWORDS = {
@@ -76,22 +78,6 @@ def recommend_books(book_id, book_tags_df, top_n=5):
     Recommend books based on tag overlap for a given book_id.
     Returns top_n recommendations sorted by tag overlap.
     """
-    """df = book_tags_df.copy()
-
-    target_tags = df.loc[df['book_id'] == book_id, 'tags'].values
-    if len(target_tags) == 0:
-        print("Book ID not found.")
-        return None
-
-    target_tags = target_tags[0]
-
-    def tag_overlap(row):
-        return len(target_tags.intersection(row['tags']))
-
-    df['overlap'] = df.apply(tag_overlap, axis=1)
-    recommendations = df[df['book_id'] != book_id].sort_values(by='overlap', ascending=False).head(top_n)
-
-    return recommendations[['book_id', 'title', 'tags', 'overlap']]"""
     df = book_tags_df.copy()
 
     target_tags = df.loc[df['book_id'] == book_id, 'tags'].values
