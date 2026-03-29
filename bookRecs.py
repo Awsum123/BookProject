@@ -24,20 +24,6 @@ def load_data():
     return books, book_tags, tags
 
 
-"""def prepare_book_tags_set(books, book_tags, tags):
-    book_tags_merged = pd.merge(book_tags, tags, on='tag_id')
-    book_tags_set = book_tags_merged.groupby('goodreads_book_id')['tag_name'].agg(set).reset_index()
-    books_subset = books[['goodreads_book_id', 'title', 'authors']]
-    book_tags_set = pd.merge(book_tags_set, books_subset, on='goodreads_book_id')
-    book_tags_set.rename(columns={'goodreads_book_id': 'book_id', 'tag_name': 'tags'}, inplace=True)
-    book_tags_set = book_tags_set[['book_id', 'title', 'authors', 'tags']]
-
-    # Add normalized versions for robust matching
-    book_tags_set['norm_title'] = book_tags_set['title'].apply(clean_text)
-    book_tags_set['norm_authors'] = book_tags_set['authors'].apply(clean_text)
-
-    return book_tags_set
-    print(book_tags_set.columns)"""
 
 def prepare_book_tags_set(books, book_tags, tags):
     book_tags_merged = pd.merge(book_tags, tags, on='tag_id')
@@ -56,6 +42,7 @@ def prepare_book_tags_set(books, book_tags, tags):
     book_tags_set['norm_title'] = book_tags_set['title'].apply(clean_text)
     book_tags_set['norm_authors'] = book_tags_set['authors'].apply(clean_text)
 
+    print("RETURNING TWO VALUES")
     return book_tags_set, tag_counts
 
 
