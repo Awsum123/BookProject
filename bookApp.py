@@ -92,7 +92,7 @@ function startDictationOnce() {
 
 # --- Load Models/Data ---
 books, book_tags, tags = cached_load_data()
-book_tags_set = cached_prepare_book_tags_set(books, book_tags, tags)
+book_tags_set, tag_counts = cached_prepare_book_tags_set(books, book_tags, tags)
 MODEL = cached_init_genai()
 
 # --- UI ---
