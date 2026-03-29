@@ -63,7 +63,7 @@ def recommend_books(book_id, book_tags_df, top_n=5):
     Recommend books based on tag overlap for a given book_id.
     Returns top_n recommendations sorted by tag overlap.
     """
-    df = book_tags_df.copy()
+    """df = book_tags_df.copy()
 
     target_tags = df.loc[df['book_id'] == book_id, 'tags'].values
     if len(target_tags) == 0:
@@ -78,7 +78,27 @@ def recommend_books(book_id, book_tags_df, top_n=5):
     df['overlap'] = df.apply(tag_overlap, axis=1)
     recommendations = df[df['book_id'] != book_id].sort_values(by='overlap', ascending=False).head(top_n)
 
-    return recommendations[['book_id', 'title', 'tags', 'overlap']]
+    return recommendations[['book_id', 'title', 'tags', 'overlap']]"""
+    df = book_tags_df.copy()
+
+    target_tags = df.loc[df['book_id'] == book_id, 'tags'].values
+    if len(target_tags) == 0:
+        print("Book ID not found.")
+        return None
+
+    target_tags = target_tags[0]
+
+    def compute_overlap(row):
+        shared = target_tags.intersection(row['tags'])
+        return pd.Series([len(shared), shared])
+
+    df[['overlap', 'shared_tags']] = df.apply(compute_overlap, axis=1)
+
+    recommendations = df[df['book_id'] != book_id] \
+        .sort_values(by='overlap', ascending=False) \
+        .head(top_n)
+
+    return recommendations[['book_id', 'title', 'overlap', 'shared_tags']]
 
 
 """def recommend_books_by_title_author(title, author, book_tags_df, top_n=5):
