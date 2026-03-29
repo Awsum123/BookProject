@@ -11,6 +11,35 @@ def clean_text(text):
     text = re.sub(r'\s+', ' ', text)     # Collapse multiple spaces
     return text.strip()
 
+def clean_display_tags(tags):
+    cleaned = []
+    
+    for tag in tags:
+        tag = tag.lower()
+        tag = tag.replace("-", " ").strip()
+
+        # normalize common duplicates
+        if "dystop" in tag:
+            tag = "dystopian"
+        if "post apocalyptic" in tag:
+            tag = "post-apocalyptic"
+
+        # remove bad tags
+        if tag in ["suzanne collins", "the hunger games", "hunger games"]:
+            continue
+
+        cleaned.append(tag)
+
+    # remove duplicates while keeping order
+    seen = set()
+    final = []
+    for tag in cleaned:
+        if tag not in seen:
+            seen.add(tag)
+            final.append(tag)
+
+    return final
+
 def load_data():
     """Load raw CSVs from URLs and return DataFrames."""
     tags_url = "https://raw.githubusercontent.com/zygmuntz/goodbooks-10k/master/tags.csv"
