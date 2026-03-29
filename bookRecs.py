@@ -62,7 +62,14 @@ STOPWORDS = {
     'kindle', 'ebooks', 'e-book', 'book-club', 'my-books',
     'library', 'owned-books', 'i-own', 'books-i-own',
     'my-library', 'currently-reading', 'read', 'read-in-2012',
-    'read-in-2013', 'read-in-2014', 'read-in-2015', 'read-in-2016', 'read-2016', 'e-books'
+    'read-in-2013', 'read-in-2014', 'read-in-2015', 'read-in-2016', 'read-2016', 'e-books', 'to-read', 'owned', 'own-it', 'favorites', 'favourites', 'default',
+    'kindle', 'ebooks', 'e-book', 'book-club', 'my-books',
+    'library', 'owned-books', 'i-own', 'books-i-own',
+    'my-library', 'currently-reading', 'read', 'read-in-2012',
+    'read-in-2013', 'read-in-2014', 'read-in-2015',
+    'fiction', 'novel', 'books', 'book',
+    'ya', 'young-adult', 'ya-fiction', 'ya-books',
+    'english', '4-stars', '5-stars'
 }
 def recommend_books(book_id, book_tags_df, top_n=5):
     """
@@ -96,7 +103,8 @@ def recommend_books(book_id, book_tags_df, top_n=5):
 
     def compute_overlap(row):
         shared = target_tags.intersection(row['tags'])
-        filtered = {tag for tag in shared if tag not in STOPWORDS and len(tag) > 3}
+        filtered = [tag for tag in shared if tag not in STOPWORDS and len(tag) > 4]
+        filtered = sorted(filtered, key=lambda x: -len(x))
         return pd.Series([len(filtered), filtered])
 
     df[['overlap', 'shared_tags']] = df.apply(compute_overlap, axis=1)
