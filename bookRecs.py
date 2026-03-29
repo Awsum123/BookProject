@@ -62,7 +62,7 @@ STOPWORDS = {
     'kindle', 'ebooks', 'e-book', 'book-club', 'my-books',
     'library', 'owned-books', 'i-own', 'books-i-own',
     'my-library', 'currently-reading', 'read', 'read-in-2012',
-    'read-in-2013', 'read-in-2014', 'read-in-2015', 'read-in-2016', 'read-2016'
+    'read-in-2013', 'read-in-2014', 'read-in-2015', 'read-in-2016', 'read-2016', 'e-books'
 }
 def recommend_books(book_id, book_tags_df, top_n=5):
     """
