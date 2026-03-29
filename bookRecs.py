@@ -73,7 +73,7 @@ STOPWORDS = {
     'ya', 'young-adult', 'ya-fiction', 'ya-books',
     'english', '4-stars', '5-stars'
 }
-def recommend_books(book_id, book_tags_df, top_n=5):
+def recommend_books(book_id, book_tags_df, tag_counts, top_n=5):
     """
     Recommend books based on tag overlap for a given book_id.
     Returns top_n recommendations sorted by tag overlap.
@@ -89,8 +89,11 @@ def recommend_books(book_id, book_tags_df, top_n=5):
 
     def compute_overlap(row):
         shared = target_tags.intersection(row['tags'])
-        filtered = [tag for tag in shared if tag not in STOPWORDS and len(tag) > 4]
-        filtered = sorted(filtered, key=lambda x: -len(x))
+        filtered = [
+            tag for tag in shared
+            if tag not in STOPWORDS and len(tag) > 4
+        ]
+        filtered = sorted(filtered, key=lambda x: tag_counts[x])
         return pd.Series([len(filtered), filtered])
 
     df[['overlap', 'shared_tags']] = df.apply(compute_overlap, axis=1)
@@ -124,7 +127,7 @@ def recommend_books(book_id, book_tags_df, top_n=5):
 
 
 
-def recommend_books_by_title_author(title, author, book_tags_df, top_n=5, threshold=70):
+def recommend_books_by_title_author(title, author, book_tags_df, tag_counts, top_n=5, threshold=70):
     title_clean = clean_text(title)
     author_clean = clean_text(author)
 
@@ -155,7 +158,7 @@ def recommend_books_by_title_author(title, author, book_tags_df, top_n=5, thresh
     target_title = matched_book['title']
     print(f"\n📘 Found Book: '{target_title}' (ID: {book_id}) — generating recommendations...\n")
 
-    return recommend_books(book_id, book_tags_df, top_n=top_n)
+    return recommend_books(book_id, book_tags_df, tag_counts, top_n=top_n)
 
 
 def recommend_books_cosine(title, author, book_tags_df, similarity_matrix, top_n=5):
