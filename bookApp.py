@@ -15,7 +15,8 @@ from bookRecs import(
     recommend_books,
     recommend_books_by_title_author,
     prepare_book_tags_set, load_data,
-    recommend_books_cosine
+    recommend_books_cosine,
+    clean_display_tags
 )
 import pandas as pd
 import base64
@@ -221,31 +222,3 @@ if 'title_author' in st.session_state and 'books' in st.session_state:
             st.write(series)
         else:
             st.write("This book is not part of a series.")
-def clean_display_tags(tags):
-    cleaned = []
-    
-    for tag in tags:
-        tag = tag.lower()
-        tag = tag.replace("-", " ").strip()
-
-        # normalize common duplicates
-        if "dystop" in tag:
-            tag = "dystopian"
-        if "post apocalyptic" in tag:
-            tag = "post-apocalyptic"
-
-        # remove bad tags
-        if tag in ["suzanne collins", "the hunger games", "hunger games"]:
-            continue
-
-        cleaned.append(tag)
-
-    # remove duplicates while keeping order
-    seen = set()
-    final = []
-    for tag in cleaned:
-        if tag not in seen:
-            seen.add(tag)
-            final.append(tag)
-
-    return final
