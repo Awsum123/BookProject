@@ -57,7 +57,13 @@ def prepare_book_tags_set(books, book_tags, tags):
     return book_tags_set
 
 
-
+STOPWORDS = {
+    'to-read', 'owned', 'favorites', 'favourites', 'default',
+    'kindle', 'ebooks', 'e-book', 'book-club', 'my-books',
+    'library', 'owned-books', 'i-own', 'books-i-own',
+    'my-library', 'currently-reading', 'read', 'read-in-2012',
+    'read-in-2013', 'read-in-2014', 'read-in-2015', 'read-in-2016', 'read-2016'
+}
 def recommend_books(book_id, book_tags_df, top_n=5):
     """
     Recommend books based on tag overlap for a given book_id.
@@ -90,7 +96,8 @@ def recommend_books(book_id, book_tags_df, top_n=5):
 
     def compute_overlap(row):
         shared = target_tags.intersection(row['tags'])
-        return pd.Series([len(shared), shared])
+        filtered = {tag for tag in shared if tag not in STOPWORDS and len(tag) > 3}
+        return pd.Series([len(filtered), filtered])
 
     df[['overlap', 'shared_tags']] = df.apply(compute_overlap, axis=1)
 
